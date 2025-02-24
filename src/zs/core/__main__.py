@@ -10,6 +10,7 @@ def cli():
 
 @cli.command()
 def list():
+    click.echo(sys.executable)
     click.echo("=======builtin=======")
     click.echo("kvstore")
     click.echo("=======installed=======")
