@@ -14,7 +14,7 @@ def list():
     click.echo("=======builtin=======")
     click.echo("kvstore")
     click.echo("=======installed=======")
-    for exe in zs.core.INSTALLED:
+    for exe in zs.core.get_installed():
         click.echo(exe)
 
 @cli.command()
