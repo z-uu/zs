@@ -47,8 +47,9 @@ def update(exe, all):
         click.echo("Please provide either an executable name or --all flag")
         return
     
-    if exe == "zs" or all:
-        subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", "git+https://github.com/z-uu/zs.git"])
+    if exe == "zs":
+        click.echo("Updating self is not allowed, please run the following command instead:")
+        click.echo("python -m pip install --upgrade git+https://github.com/z-uu/zs.git")
         return
 
     if all:
