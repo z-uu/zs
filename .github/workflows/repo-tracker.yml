@@ -1,0 +1,49 @@
+name: Repository Tracker
+
+on:
+  workflow_call:
+  push:
+    paths:
+      - 'pyproject.toml'
+  workflow_dispatch:
+
+jobs:
+  update-repos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Fetch and process repos
+        run: |
+          # Install jq for JSON processing
+          sudo apt-get install -y jq
+
+          # Fetch all pages of repositories
+          PAGE=1
+          ALL_REPOS="[]"
+          while true; do
+            RESPONSE=$(curl -s "https://api.github.com/orgs/z-uu/repos?page=$PAGE&per_page=100")
+            CURRENT_REPOS=$(echo "$RESPONSE" | jq -c '[.[] | select(.name | startswith("zs.")) | {name: .name, git_url: .git_url}]')
+            
+            # Merge with previous results
+            ALL_REPOS=$(jq -c --argjson new "$CURRENT_REPOS" --argjson existing "$ALL_REPOS" '$existing + $new' <<< '[]')
+            
+            # Check if there's a next page
+            if [[ "$RESPONSE" != *"rel=\"next\""* ]]; then
+              break
+            fi
+            ((PAGE++))
+          done
+
+          # Create directory if not exists
+          mkdir -p src/zs/core
+          echo "$ALL_REPOS" | jq '.' > src/zs/core/index.json
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add src/zs/core/index.json
+          git commit -m "Update zs repos list" || echo "No changes to commit"
+          git push 
