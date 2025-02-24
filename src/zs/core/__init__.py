@@ -1,10 +1,11 @@
 import os
 import sys
 import json
-ZS_EXE_PATH = os.path.dirname(sys.executable)
+ZS_EXE_PATH = os.path.join(os.path.dirname(sys.executable), "Scripts")
 APP_CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".zs")
 
 def get_installed():
+    installed = []
     for exep in os.listdir(ZS_EXE_PATH):
         if not os.path.isfile(os.path.join(ZS_EXE_PATH, exep)):
             continue
@@ -17,7 +18,9 @@ def get_installed():
         if not exep.startswith("zs."):
             continue
 
-        yield exep.replace(".exe", "")
+        installed.append(exep.replace(".exe", ""))
+
+    return installed
 
 INSTALLED = list(get_installed())
 

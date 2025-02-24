@@ -3,7 +3,6 @@ import sys
 import click
 import zs.core
 import subprocess
-
 @click.group()
 def cli():
     pass
