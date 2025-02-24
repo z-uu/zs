@@ -21,13 +21,13 @@ jobs:
 
           # Fetch all pages of repositories
           PAGE=1
-          ALL_REPOS="[]"
+          ALL_REPOS="{}"
           while true; do
             RESPONSE=$(curl -s "https://api.github.com/orgs/z-uu/repos?page=$PAGE&per_page=100")
-            CURRENT_REPOS=$(echo "$RESPONSE" | jq -c '[.[] | select(.name | startswith("zs.")) | {name: .name, git_url: .git_url}]')
+            CURRENT_REPOS=$(echo "$RESPONSE" | jq -c '[.[] | select(.name | startswith("zs."))] | index_by(.name) | map_values({git_url: .git_url})')
             
             # Merge with previous results
-            ALL_REPOS=$(jq -c --argjson new "$CURRENT_REPOS" --argjson existing "$ALL_REPOS" '$existing + $new' <<< '[]')
+            ALL_REPOS=$(jq -c --argjson new "$CURRENT_REPOS" --argjson existing "$ALL_REPOS" '$existing * $new' <<< '{}')
             
             # Check if there's a next page
             if [[ "$RESPONSE" != *"rel=\"next\""* ]]; then
