@@ -47,13 +47,18 @@ def update(exe, all):
         return
     
     if exe == "zs":
-        subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", "zs"])
+        git_url = zs.core.INDEX[exe]["git_url"].split("://")[1]
+        git_url = "https://" + git_url
+        subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", f"git+{git_url}"])
         return
 
     if all:
-        # update zs first
-        subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", "zs"])
-
+        # Update zs first using git_url
+        if "zs" in zs.core.INDEX:
+            git_url = zs.core.INDEX["zs"]["git_url"].split("://")[1]
+            git_url = "https://" + git_url
+            subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", f"git+{git_url}"])
+        
         for exe in zs.core.INSTALLED:
             if exe == "zs":
                 continue
