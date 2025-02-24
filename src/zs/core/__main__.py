@@ -46,6 +46,10 @@ def update(exe, all):
         click.echo("Please provide either an executable name or --all flag")
         return
     
+    if exe == "zs":
+        subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", "zs"])
+        return
+
     if all:
         # update zs first
         subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", "zs"])
