@@ -24,7 +24,7 @@ jobs:
           ALL_REPOS="{}"
           while true; do
             RESPONSE=$(curl -s "https://api.github.com/orgs/z-uu/repos?page=$PAGE&per_page=100")
-            CURRENT_REPOS=$(echo "$RESPONSE" | jq -c '[.[] | select(.name | startswith("zs."))] | index_by(.name) | map_values({git_url: .git_url})')
+            CURRENT_REPOS=$(echo "$RESPONSE" | jq -c '.[] | select(.name | startswith("zs.")) | {(.name): {git_url: .git_url}} | [.] | add')
             
             # Merge with previous results
             ALL_REPOS=$(jq -c --argjson new "$CURRENT_REPOS" --argjson existing "$ALL_REPOS" '$existing * $new' <<< '{}')
