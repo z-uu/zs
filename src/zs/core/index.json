@@ -1,14 +1,11 @@
-[
-  {
-    "name": "zs.get-current-coord",
+{
+  "zs.get-current-coord": {
     "git_url": "git://github.com/z-uu/zs.get-current-coord.git"
   },
-  {
-    "name": "zs.resume-gen",
+  "zs.resume-gen": {
     "git_url": "git://github.com/z-uu/zs.resume-gen.git"
   },
-  {
-    "name": "zs.zuto",
+  "zs.zuto": {
     "git_url": "git://github.com/z-uu/zs.zuto.git"
   }
-]
+}
