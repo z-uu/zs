@@ -61,5 +61,15 @@ def update(exe, all):
         return
     subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", exe])
 
+@cli.command()
+def index():
+    for exe in zs.core.INDEX:
+        if exe == "zs":
+            continue
+        if exe in zs.core.INSTALLED:
+            click.echo(f"{exe["name"]} (installed)")
+        else:
+            click.echo(f"{exe["name"]}")
+
 if __name__ == "__main__":
     cli()
