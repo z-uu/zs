@@ -76,9 +76,9 @@ def index():
         if exe == "zs":
             continue
         if exe in zs.core.INSTALLED:
-            click.echo(f"{exe["name"]} (installed)")
+            click.echo(f"{exe} (installed)")
         else:
-            click.echo(f"{exe["name"]}")
+            click.echo(f"{exe}")
 
 if __name__ == "__main__":
     cli()
