@@ -29,12 +29,10 @@ jobs:
                 . as $repos |
                 # First filter: names starting with zs.
                 ($repos | map(select(.name | startswith("zs.")))) as $filtered1 |
-                # Second filter: exclude exact match zs.zuto
-                ($filtered1 | map(select(.name != "zs.zuto"))) as $filtered2 |
-                # Third filter: exclude zs.zuto.* names
-                ($filtered2 | map(select(.name | startswith("zs.zuto.") | not))) as $filtered3 |
+                # Second filter: exclude zs.zuto.* names but keep zs.zuto
+                ($filtered1 | map(select(.name | startswith("zs.zuto.") | not))) as $filtered2 |
                 # Format final output
-                $filtered3 | [.[] | {(.name): {git_url: .git_url}}] | add // {}
+                $filtered2 | [.[] | {(.name): {git_url: .git_url}}] | add // {}
               else
                 {}
               end')
