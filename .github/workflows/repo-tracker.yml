@@ -24,7 +24,20 @@ jobs:
           ALL_REPOS="{}"
           while true; do
             RESPONSE=$(curl -s "https://api.github.com/orgs/z-uu/repos?page=$PAGE&per_page=100")
-            CURRENT_REPOS=$(echo "$RESPONSE" | jq -c '[.[] | select(.name | startswith("zs.") and (.name != "zs.zuto") and (.name | startswith("zs.zuto.") | not)) | {(.name): {git_url: .git_url}}] | add // {}')
+            CURRENT_REPOS=$(echo "$RESPONSE" | jq -c '
+              if type == "array" then
+                . as $repos |
+                # First filter: names starting with zs.
+                ($repos | map(select(.name | startswith("zs.")))) as $filtered1 |
+                # Second filter: exclude exact match zs.zuto
+                ($filtered1 | map(select(.name != "zs.zuto"))) as $filtered2 |
+                # Third filter: exclude zs.zuto.* names
+                ($filtered2 | map(select(.name | startswith("zs.zuto.") | not))) as $filtered3 |
+                # Format final output
+                $filtered3 | [.[] | {(.name): {git_url: .git_url}}] | add // {}
+              else
+                {}
+              end')
             
             # Merge with previous results
             ALL_REPOS=$(jq -c --argjson existing "$ALL_REPOS" --argjson new "$CURRENT_REPOS" '$existing * $new' <<< '{}')
