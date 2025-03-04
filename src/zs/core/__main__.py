@@ -3,6 +3,13 @@ import sys
 import click
 import zs.core
 import subprocess
+
+def get_git_url(exe):
+    if exe not in zs.core.INDEX:
+        return None
+    git_url = zs.core.INDEX[exe]["git_url"].split("://")[1]
+    return "https://" + git_url
+
 @click.group()
 def cli():
     pass
@@ -26,8 +33,7 @@ def install(exe):
         click.echo(f"Not found: {exe}")
         return
     
-    git_url = zs.core.INDEX[exe]["git_url"].split("://")[1]
-    git_url = "https://" + git_url  
+    git_url = get_git_url(exe)
     os.system(f"{sys.executable} -m pip install git+{git_url}")
 
 @cli.command()
@@ -55,13 +61,20 @@ def update(exe, all):
         for exe in zs.core.INSTALLED:
             if exe == "zs":
                 continue
-            subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", exe])
+            git_url = get_git_url(exe)
+            if git_url:
+                subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", f"git+{git_url}"])
         return
     
     if exe not in zs.core.INSTALLED:
         click.echo(f"Not installed: {exe}")
         return
-    subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", exe])
+    git_url = get_git_url(exe)
+    if not git_url:
+        click.echo(f"Not found in index: {exe}")
+        return
+        
+    subprocess.call([sys.executable, "-m", "pip", "install", "--upgrade", f"git+{git_url}"])
 
 @cli.command()
 def index():
