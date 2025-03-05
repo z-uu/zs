@@ -1,0 +1,33 @@
+name: Increment Micro Version
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  increment-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Increment micro version
+        id: version
+        run: |
+          current_version=$(grep '^version = "' pyproject.toml | cut -d'"' -f2)
+          IFS=. read major minor micro <<<"$current_version"
+          new_micro=$((micro + 1))
+          new_version="${major}.${minor}.${new_micro}"
+          sed -i "s/^version = \".*\"/version = \"${new_version}\"/" pyproject.toml
+          echo "new_version=${new_version}" >> $GITHUB_OUTPUT
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add pyproject.toml
+          git commit -m "Bump version to ${{ steps.version.outputs.new_version }}"
+          git push

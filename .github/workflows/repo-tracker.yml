@@ -4,7 +4,9 @@ on:
   workflow_call:
   push:
     paths:
-      - 'pyproject.toml'
+      - 'src/zs/*'
+    branches:
+      - main
   schedule:
     - cron: '0 0 * * 0'  # Every Sunday at 00:00 UTC
   workflow_dispatch:
@@ -52,6 +54,10 @@ jobs:
           # Create directory if not exists
           mkdir -p src/zs/core
           echo "$ALL_REPOS" | jq '.' > src/zs/core/index.json
+
+      
+      - name: Increment version
+        uses: ./.github/workflows/increment-ver.yml
 
       - name: Commit and push changes
         run: |
