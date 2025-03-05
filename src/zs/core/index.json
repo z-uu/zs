@@ -5,7 +5,7 @@
   "zs.resume-gen": {
     "git_url": "git://github.com/z-uu/zs.resume-gen.git"
   },
-  "zs.zuto": {
-    "git_url": "git://github.com/z-uu/zs.zuto.git"
+  "zs.zflow": {
+    "git_url": "git://github.com/z-uu/zs.zflow.git"
   }
 }
