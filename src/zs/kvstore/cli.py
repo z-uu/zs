@@ -90,6 +90,20 @@ def swap():
     else:
         click.echo("No backup found")
 
+@cli.command(help="Rename key")
+@click.argument("old_key", type=str)
+@click.argument("new_key", type=str)
+def rename(old_key, new_key):
+    if old_key not in KVStore.INDEX:
+        click.echo(f"Key {old_key} not found")
+        return
+    if new_key in KVStore.INDEX:
+        click.echo(f"Key {new_key} already exists")
+        return
+    old_value = KVStore.get(old_key)
+    KVStore.delete(old_key)
+    KVStore.set(new_key, old_value)
+    click.echo(f"Renamed {old_key} to {new_key}")
 
 @cli.command()
 @click.argument("key", type=str)
