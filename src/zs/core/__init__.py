@@ -22,6 +22,9 @@ def get_installed():
 
     return installed
 
-INSTALLED = list(get_installed())
+try:
+    INSTALLED = list(get_installed())
+except Exception:
+    INSTALLED = []
 
 INDEX = json.load(open(os.path.join(os.path.dirname(__file__), "index.json")))
