@@ -17,6 +17,11 @@ class KVStore:
         INDEX = json.load(f)
 
     @staticmethod
+    def load():
+        with open(PATH, "r", encoding="utf-8") as f:
+            KVStore.INDEX = json.load(f)
+
+    @staticmethod
     def save():
         with open(PATH, "w", encoding="utf-8") as f:
             json.dump(KVStore.INDEX, f, ensure_ascii=False, indent=4)
@@ -26,9 +31,12 @@ class KVStore:
         return KVStore.INDEX.get(key)
     
     @staticmethod
-    def set(key : str, value : str):
+    def set(key : str, value : str, no_existing : bool = False):
+        if no_existing and key in KVStore.INDEX:
+            return False
         KVStore.INDEX[key] = value
         KVStore.save()
+        return True
 
     @staticmethod
     def delete(key : str):
