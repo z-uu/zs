@@ -17,12 +17,15 @@ class _KVStore:
         return self.STORE.get(key, default)
 
     def set(self, key : str, value):
-        val = self.STORE.copy()
-        val[key] = value
-        self.STORE = val
+        self.STORE[key] = value
     
     def delete(self, key : str):
-        del self.STORE[key]
+        if key not in self.STORE:
+            return
+        data = self.STORE.copy()
+    
+        del data[key]
+        self.STORE = data
 
     def clear(self):
         self.STORE.clear()
